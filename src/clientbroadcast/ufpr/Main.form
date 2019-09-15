@@ -176,7 +176,7 @@
         </Container>
         <Component class="javax.swing.JLabel" name="LabelTitleResponse">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Retorno do servidor"/>
+            <Property name="text" type="java.lang.String" value="Retorno do Broadcast/Monitor"/>
           </Properties>
         </Component>
       </SubComponents>

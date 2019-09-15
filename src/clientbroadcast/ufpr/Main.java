@@ -5,13 +5,10 @@
  */
 package clientbroadcast.ufpr;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
@@ -20,7 +17,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author ebner
+ * @author elielton
  */
 public class Main extends javax.swing.JFrame {
 
@@ -106,7 +103,7 @@ public class Main extends javax.swing.JFrame {
         TextAreaResponse.setRows(5);
         jScrollPane2.setViewportView(TextAreaResponse);
 
-        LabelTitleResponse.setText("Retorno do servidor");
+        LabelTitleResponse.setText("Retorno do Broadcast/Monitor");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -165,18 +162,20 @@ public class Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ButtonSendDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonSendDataActionPerformed
+        // Valida se a mensagem não está vazia
         if (TextAreaInput.getText().equals("")) {
             JOptionPane.showMessageDialog(this, "Por favor digite alguma mensagem antes de enviar!");
             return;
         }
-        
+            // Criamos o socket
             DatagramSocket clientSocket = null;
             try {
                 clientSocket = new DatagramSocket();
             } catch (SocketException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
-
+            
+            // Inicializa a variável IPAddress
             InetAddress IPAddress = null;
             try {
                 IPAddress = InetAddress.getByName("192.168.100.255");
@@ -184,33 +183,44 @@ public class Main extends javax.swing.JFrame {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+            // Array de bytes para os dados enviados
             byte[] sendData = new byte[1024];
+            // Array de bytes para os dados retornados do monitor
             byte[] receiveData = new byte[1024];
-
+            
+            // Mensagem a ser enviada pelo cliente
             String sentence =  TextAreaInput.getText();
-
+            
+            // Transforma a mensagem a ser enviada em Bytes
             sendData = sentence.getBytes();
-
+            
+            // Cria o objeto para ser enviado ao broadcast
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 9876);
-
+            
+            // Envia os dados para o broadcast
             try {
                 clientSocket.send(sendPacket);
             } catch (IOException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
-
+            
+            // Cria o objeto para receber o retorno do broadcast para printar na tela
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 
             try {
+                // Recebe o retorno do monitor (que enviou para o broadcast)
                 clientSocket.receive(receivePacket);
             } catch (IOException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
-
+            
+            // Transforma o retorno do monitor (Bytes) em string
             String modifiedSentence = new String(receivePacket.getData());
             
-            TextAreaResponse.setText(TextAreaResponse.getText() + "\nRetorno do servidor: " + modifiedSentence);
-
+            // Seta no TextArea o retorno do broadcast!
+            TextAreaResponse.setText(TextAreaResponse.getText() + "\nRetorno do Monitor/Broadcast: " + modifiedSentence);
+        
+        // Fecha a conexão
         clientSocket.close();
     }//GEN-LAST:event_ButtonSendDataActionPerformed
 
