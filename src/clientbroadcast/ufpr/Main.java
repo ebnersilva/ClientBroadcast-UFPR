@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
@@ -47,10 +48,18 @@ public class Main extends javax.swing.JFrame {
         TextAreaInput = new javax.swing.JTextArea();
         LabelTitleInput = new javax.swing.JLabel();
         ButtonClearData = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        TextAreaResponse = new javax.swing.JTextArea();
+        LabelTitleResponse = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("CLiente Broadcast - UFPR");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         LabelTitle.setFont(new java.awt.Font("Noto Sans", 1, 18)); // NOI18N
         LabelTitle.setText("Cliente Emissor de dados para o Broadcast Server");
@@ -92,22 +101,31 @@ public class Main extends javax.swing.JFrame {
             }
         });
 
+        TextAreaResponse.setEditable(false);
+        TextAreaResponse.setColumns(20);
+        TextAreaResponse.setRows(5);
+        jScrollPane2.setViewportView(TextAreaResponse);
+
+        LabelTitleResponse.setText("Retorno do servidor");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(LabelTitleInput)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(ButtonClearData, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ButtonSendData)
                 .addGap(162, 162, 162))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(LabelTitleResponse)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LabelTitleInput)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -116,6 +134,10 @@ public class Main extends javax.swing.JFrame {
                 .addComponent(LabelTitleInput)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(LabelTitleResponse)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ButtonSendData)
@@ -135,7 +157,7 @@ public class Main extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -157,7 +179,7 @@ public class Main extends javax.swing.JFrame {
 
             InetAddress IPAddress = null;
             try {
-                IPAddress = InetAddress.getByName("TitanNot");
+                IPAddress = InetAddress.getByName("192.168.100.255");
             } catch (UnknownHostException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -186,16 +208,19 @@ public class Main extends javax.swing.JFrame {
             }
 
             String modifiedSentence = new String(receivePacket.getData());
+            
+            TextAreaResponse.setText(TextAreaResponse.getText() + "\nRetorno do servidor: " + modifiedSentence);
 
         clientSocket.close();
-        
-        
-        
     }//GEN-LAST:event_ButtonSendDataActionPerformed
 
     private void ButtonClearDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonClearDataActionPerformed
         TextAreaInput.setText((""));
     }//GEN-LAST:event_ButtonClearDataActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+
+    }//GEN-LAST:event_formWindowOpened
 
     /**
      * @param args the command line arguments
@@ -237,9 +262,12 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JButton ButtonSendData;
     private javax.swing.JLabel LabelTitle;
     private javax.swing.JLabel LabelTitleInput;
+    private javax.swing.JLabel LabelTitleResponse;
     private javax.swing.JTextArea TextAreaInput;
+    private javax.swing.JTextArea TextAreaResponse;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 }
